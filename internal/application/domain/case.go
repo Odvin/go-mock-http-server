@@ -2,7 +2,7 @@ package domain
 
 import "time"
 
-type Case struct {
+type Company struct {
 	ID      int       `json:"id"`
 	Created time.Time `json:"created"`
 	Updated time.Time `json:"updated"`

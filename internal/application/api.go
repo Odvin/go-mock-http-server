@@ -6,7 +6,7 @@ import (
 )
 
 type API interface {
-	getCase(id int) (*domain.Case, error)
+	GetCompany(id int) (*domain.Company, error)
 }
 
 type Application struct {

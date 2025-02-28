@@ -10,16 +10,20 @@ import (
 	"os/signal"
 	"syscall"
 	"time"
+
+	"github.com/Odvin/go-mock-http-server/internal/application"
 )
 
 type WebService struct {
+	api application.API
 	adr int
 	ver string
 	env string
 }
 
-func Init(adr int, ver, env string) *WebService {
+func Init(api application.API, adr int, ver, env string) *WebService {
 	return &WebService{
+		api: api,
 		adr: adr,
 		ver: ver,
 		env: env,

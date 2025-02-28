@@ -4,15 +4,15 @@ import "github.com/Odvin/go-mock-http-server/internal/application/domain"
 
 type StoreAdapter struct {
 	maxElements int
-	cases       []domain.Case
+	company     []domain.Company
 }
 
 func Init(maxElements int) *StoreAdapter {
-	cases := make([]domain.Case, maxElements)
-	seedCases(cases)
+	company := make([]domain.Company, maxElements)
+	seedCompany(company)
 
 	return &StoreAdapter{
 		maxElements: maxElements,
-		cases:       cases,
+		company:     company,
 	}
 }
