@@ -48,7 +48,7 @@ func (web *WebService) Serve() error {
 
 		s := <-quit
 
-		log.Printf("stoping the server (signal: %s)", s.String())
+		log.Printf("stopping the server (signal: %s)", s.String())
 
 		ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
 		defer cancel()
@@ -66,7 +66,7 @@ func (web *WebService) Serve() error {
 		return err
 	}
 
-	log.Printf("stoped server on port %s", srv.Addr)
+	log.Printf("stopped server on port %s", srv.Addr)
 
 	return nil
 }

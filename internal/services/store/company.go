@@ -2,17 +2,20 @@ package store
 
 import (
 	"errors"
+	"time"
 
 	"github.com/Odvin/go-mock-http-server/internal/application/domain"
 	"github.com/brianvoe/gofakeit/v7"
 )
 
-func seedCompany(cases []domain.Company) {
+func seedCompany(company []domain.Company) {
 	statuses := []string{"public", "private"}
 
-	for i := range len(cases) {
-		created := gofakeit.PastDate()
-		cases[i] = domain.Company{
+	var created time.Time
+	for i := range len(company) {
+		created = gofakeit.Date()
+
+		company[i] = domain.Company{
 			ID:      i,
 			Created: created,
 			Updated: created,
@@ -35,4 +38,16 @@ func (s *StoreAdapter) GetCompany(id int) (*domain.Company, error) {
 	c := s.company[id]
 
 	return &c, nil
+}
+
+func (s *StoreAdapter) GetCompanyUpdates(from, to time.Time, status string) []domain.Company {
+	var companies []domain.Company
+
+	for _, c := range s.company {
+		if c.Updated.After(from) && c.Updated.Before(to) && c.Status == status {
+			companies = append(companies, c)
+		}
+	}
+
+	return companies
 }

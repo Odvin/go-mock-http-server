@@ -1,12 +1,15 @@
 package application
 
 import (
+	"time"
+
 	"github.com/Odvin/go-mock-http-server/internal/application/domain"
 	"github.com/Odvin/go-mock-http-server/internal/ports"
 )
 
 type API interface {
 	GetCompany(id int) (*domain.Company, error)
+	GetCompanyUpdates(from, to time.Time, status string) []domain.Company
 }
 
 type Application struct {

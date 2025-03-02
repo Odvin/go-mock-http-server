@@ -6,6 +6,7 @@ import (
 	"maps"
 	"net/http"
 	"strconv"
+	"time"
 )
 
 type envelope map[string]any
@@ -36,4 +37,15 @@ func readIDParam(r *http.Request) (int, error) {
 	}
 
 	return int(id), nil
+}
+
+func readQueryTime(r *http.Request, param string) (time.Time, error) {
+	queryTime := r.URL.Query().Get(param)
+
+	t, err := time.Parse(time.RFC3339, queryTime)
+	if err != nil {
+		return time.Time{}, errors.New("unrecognized time format")
+	}
+
+	return t, nil
 }
