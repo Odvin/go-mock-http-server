@@ -6,15 +6,16 @@ import (
 )
 
 func (web *WebService) getCompany(w http.ResponseWriter, r *http.Request) {
-	id, err := readIDParam(r)
+	id, err := readPathInt(r, "id")
 	if err != nil {
-		notFoundResponse(w, r)
+		badRequestResponse(w, r, fmt.Errorf("id : %w", err))
 		return
 	}
 
 	company, err := web.api.GetCompany(id)
 	if err != nil {
-		serverErrorResponse(w, r, err)
+		badRequestResponse(w, r, fmt.Errorf("id : %w", err))
+		return
 	}
 
 	err = writeJSON(w, http.StatusOK, envelope{"company": company}, nil)
@@ -36,7 +37,13 @@ func (web *WebService) GetCompanyUpdates(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	companies := web.api.GetCompanyUpdates(from, to, "public")
+	status, err := readQueryStr(r, "status")
+	if err != nil {
+		badRequestResponse(w, r, fmt.Errorf("status : %w", err))
+		return
+	}
+
+	companies := web.api.GetCompanyUpdates(from, to, status)
 
 	err = writeJSON(w, http.StatusOK, envelope{"companies": companies}, nil)
 	if err != nil {

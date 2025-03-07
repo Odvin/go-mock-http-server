@@ -3,6 +3,7 @@ package web
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"maps"
 	"net/http"
 	"strconv"
@@ -28,15 +29,15 @@ func writeJSON(w http.ResponseWriter, status int, data envelope, headers http.He
 	return nil
 }
 
-func readIDParam(r *http.Request) (int, error) {
-	paramId := r.PathValue("id")
+func readPathInt(r *http.Request, path string) (int64, error) {
+	pathValue := r.PathValue(path)
 
-	id, err := strconv.ParseInt(paramId, 10, 64)
-	if err != nil || id < 1 {
-		return 0, errors.New("invalid id parameter")
+	value, err := strconv.ParseInt(pathValue, 10, 64)
+	if err != nil {
+		return 0, fmt.Errorf("%s invalid path value", pathValue)
 	}
 
-	return int(id), nil
+	return value, nil
 }
 
 func readQueryTime(r *http.Request, param string) (time.Time, error) {
@@ -48,4 +49,14 @@ func readQueryTime(r *http.Request, param string) (time.Time, error) {
 	}
 
 	return t, nil
+}
+
+func readQueryStr(r *http.Request, param string) (string, error) {
+	s := r.URL.Query().Get(param)
+
+	if s == "" {
+		return "", errors.New("value was not provided")
+	}
+
+	return s, nil
 }

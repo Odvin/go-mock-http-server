@@ -16,7 +16,7 @@ func seedCompany(company []domain.Company) {
 		created = gofakeit.Date()
 
 		company[i] = domain.Company{
-			ID:      i,
+			ID:      i + 1,
 			Created: created,
 			Updated: created,
 			Active:  gofakeit.Bool(),
@@ -30,12 +30,12 @@ func seedCompany(company []domain.Company) {
 	}
 }
 
-func (s *StoreAdapter) GetCompany(id int) (*domain.Company, error) {
-	if id > s.maxElements || id < 0 {
-		return nil, errors.New("invalid index")
+func (s *StoreAdapter) GetCompany(id int64) (*domain.Company, error) {
+	if id > int64(s.maxElements) {
+		return nil, errors.New("company id is out of the range")
 	}
 
-	c := s.company[id]
+	c := s.company[id-1]
 
 	return &c, nil
 }

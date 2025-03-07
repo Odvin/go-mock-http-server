@@ -7,6 +7,6 @@ import (
 )
 
 type Store interface {
-	GetCompany(id int) (*domain.Company, error)
+	GetCompany(id int64) (*domain.Company, error)
 	GetCompanyUpdates(from, to time.Time, status string) []domain.Company
 }
