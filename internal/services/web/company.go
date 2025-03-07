@@ -1,6 +1,7 @@
 package web
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 )
@@ -46,6 +47,37 @@ func (web *WebService) GetCompanyUpdates(w http.ResponseWriter, r *http.Request)
 	companies := web.api.GetCompanyUpdates(from, to, status)
 
 	err = writeJSON(w, http.StatusOK, envelope{"companies": companies}, nil)
+	if err != nil {
+		serverErrorResponse(w, r, err)
+	}
+}
+
+func (web *WebService) StopCompanyUpdates(w http.ResponseWriter, r *http.Request) {
+	web.api.StopCompanyUpdates()
+
+	err := writeJSON(w, http.StatusOK, envelope{"updates": "company", "stopped": true}, nil)
+	if err != nil {
+		serverErrorResponse(w, r, err)
+	}
+}
+
+func (web *WebService) StartCompanyUpdates(w http.ResponseWriter, r *http.Request) {
+	var input struct {
+		Period int64 `json:"period"`
+	}
+
+	err := json.NewDecoder(r.Body).Decode(&input)
+	if err != nil {
+		serverErrorResponse(w, r, err)
+	}
+
+	err = web.api.StartCompanyUpdates(input.Period)
+	if err != nil {
+		badRequestResponse(w, r, fmt.Errorf("body : %w", err))
+		return
+	}
+
+	err = writeJSON(w, http.StatusOK, envelope{"updates": "company", "stopped": false}, nil)
 	if err != nil {
 		serverErrorResponse(w, r, err)
 	}

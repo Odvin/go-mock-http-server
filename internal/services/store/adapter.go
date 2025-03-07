@@ -1,10 +1,15 @@
 package store
 
-import "github.com/Odvin/go-mock-http-server/internal/application/domain"
+import (
+	"time"
+
+	"github.com/Odvin/go-mock-http-server/internal/application/domain"
+)
 
 type StoreAdapter struct {
-	maxElements int
-	company     []domain.Company
+	maxElements    int
+	company        []domain.Company
+	companyUpdater companyUpdater
 }
 
 func Init(maxElements int) *StoreAdapter {
@@ -12,7 +17,8 @@ func Init(maxElements int) *StoreAdapter {
 	seedCompany(company)
 
 	return &StoreAdapter{
-		maxElements: maxElements,
-		company:     company,
+		maxElements:    maxElements,
+		company:        company,
+		companyUpdater: NewCompanyUpdater(30*time.Second, company),
 	}
 }

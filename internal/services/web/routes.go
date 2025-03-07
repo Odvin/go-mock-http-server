@@ -9,6 +9,8 @@ func (web *WebService) routes() http.Handler {
 
 	router.HandleFunc("GET /v1/company/{id}", web.getCompany)
 	router.HandleFunc("GET /v1/company/updates", web.GetCompanyUpdates)
+	router.HandleFunc("PATCH /v1/company/updates/stop", web.StopCompanyUpdates)
+	router.HandleFunc("PATCH /v1/company/updates/start", web.StartCompanyUpdates)
 
 	return router
 }

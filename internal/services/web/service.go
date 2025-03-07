@@ -50,6 +50,8 @@ func (web *WebService) Serve() error {
 
 		log.Printf("stopping the server (signal: %s)", s.String())
 
+		web.api.StopCompanyUpdates()
+
 		ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
 		defer cancel()
 

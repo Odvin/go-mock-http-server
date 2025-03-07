@@ -10,6 +10,8 @@ import (
 type API interface {
 	GetCompany(id int64) (*domain.Company, error)
 	GetCompanyUpdates(from, to time.Time, status string) []domain.Company
+	StopCompanyUpdates()
+	StartCompanyUpdates(period int64) error
 }
 
 type Application struct {

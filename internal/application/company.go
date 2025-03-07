@@ -23,3 +23,17 @@ func (app *Application) GetCompany(id int64) (*domain.Company, error) {
 func (app *Application) GetCompanyUpdates(from, to time.Time, status string) []domain.Company {
 	return app.store.GetCompanyUpdates(from, to, status)
 }
+
+func (app *Application) StopCompanyUpdates() {
+	app.store.StopCompanyUpdates()
+}
+
+func (app *Application) StartCompanyUpdates(period int64) error {
+	if period < 1 || period > 3600 {
+		return errors.New("period to update companies must be in [1; 3600] seconds")
+	}
+
+	app.store.StartCompanyUpdates(period)
+
+	return nil
+}
