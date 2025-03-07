@@ -9,7 +9,7 @@ import (
 type StoreAdapter struct {
 	maxElements    int
 	company        []domain.Company
-	companyUpdater companyUpdater
+	companyUpdater *companyUpdater
 }
 
 func Init(maxElements int) *StoreAdapter {

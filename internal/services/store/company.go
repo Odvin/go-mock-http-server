@@ -12,19 +12,23 @@ import (
 type companyUpdater struct {
 	done    chan struct{}
 	stopped chan struct{}
+	active  bool
 }
 
 func (u companyUpdater) Stop() {
-	close(u.done)
-	log.Println("store: company updater is stopping")
-	<-u.stopped
-	log.Println("store: company updater is stopped")
+	if u.active {
+		close(u.done)
+		log.Println("store: company updater is stopping")
+		<-u.stopped
+		log.Println("store: company updater is stopped")
+	}
 }
 
-func NewCompanyUpdater(period time.Duration, company []domain.Company) companyUpdater {
-	companyUpdater := companyUpdater{
+func NewCompanyUpdater(period time.Duration, company []domain.Company) *companyUpdater {
+	companyUpdater := &companyUpdater{
 		done:    make(chan struct{}),
 		stopped: make(chan struct{}),
+		active:  true,
 	}
 
 	log.Printf("store: company updater stats with period in %f seconds", period.Seconds())
@@ -35,6 +39,7 @@ func NewCompanyUpdater(period time.Duration, company []domain.Company) companyUp
 		defer func() {
 			ticker.Stop()
 			close(companyUpdater.stopped)
+			companyUpdater.active = false
 		}()
 
 		for {
@@ -113,10 +118,7 @@ func (s *StoreAdapter) GetCompanyUpdates(from, to time.Time, status string) []do
 }
 
 func (s *StoreAdapter) StartCompanyUpdates(period int64) {
-	if _, stopped := <-s.companyUpdater.stopped; !stopped {
-		s.companyUpdater.Stop()
-	}
-
+	s.companyUpdater.Stop()
 	s.companyUpdater = NewCompanyUpdater(time.Duration(period*int64(time.Second)), s.company)
 }
 
