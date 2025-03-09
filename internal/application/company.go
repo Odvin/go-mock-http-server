@@ -20,8 +20,8 @@ func (app *Application) GetCompany(id int64) (*domain.Company, error) {
 	return company, nil
 }
 
-func (app *Application) GetCompanyUpdates(from, to time.Time, status string) []domain.Company {
-	return app.store.GetCompanyUpdates(from, to, status)
+func (app *Application) GetCompanyUpdates(from, to time.Time, status string, page, size int) ([]domain.Company, int) {
+	return app.store.GetCompanyUpdates(from, to, status, page, size)
 }
 
 func (app *Application) StopCompanyUpdates() {

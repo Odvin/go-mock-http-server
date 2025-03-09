@@ -60,3 +60,14 @@ func readQueryStr(r *http.Request, param string) (string, error) {
 
 	return s, nil
 }
+
+func readQueryInt(r *http.Request, param string) (int64, error) {
+	queryValue := r.URL.Query().Get(param)
+
+	value, err := strconv.ParseInt(queryValue, 10, 64)
+	if err != nil {
+		return 0, fmt.Errorf("%s invalid path value", queryValue)
+	}
+
+	return value, nil
+}

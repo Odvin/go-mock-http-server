@@ -9,7 +9,7 @@ import (
 
 type API interface {
 	GetCompany(id int64) (*domain.Company, error)
-	GetCompanyUpdates(from, to time.Time, status string) []domain.Company
+	GetCompanyUpdates(from, to time.Time, status string, page, size int) ([]domain.Company, int)
 	StopCompanyUpdates()
 	StartCompanyUpdates(period int64) error
 	GetCompanyInfo() *domain.CompanyInfo

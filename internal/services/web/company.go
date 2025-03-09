@@ -44,9 +44,27 @@ func (web *WebService) GetCompanyUpdates(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	companies := web.api.GetCompanyUpdates(from, to, status)
+	var page, size int64
 
-	err = writeJSON(w, http.StatusOK, envelope{"companies": companies}, nil)
+	page, err = readQueryInt(r, "page")
+	if err != nil || page < 1 {
+		page = 1
+	}
+
+	size, err = readQueryInt(r, "size")
+	if err != nil || size < 1 {
+		size = 20
+	}
+
+	companies, total := web.api.GetCompanyUpdates(from, to, status, int(page), int(size))
+
+	subset := map[string]int64{
+		"total": int64(total),
+		"page":  page,
+		"size":  size,
+	}
+
+	err = writeJSON(w, http.StatusOK, envelope{"companies": companies, "subset": subset}, nil)
 	if err != nil {
 		serverErrorResponse(w, r, err)
 	}

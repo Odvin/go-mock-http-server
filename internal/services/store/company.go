@@ -117,8 +117,8 @@ func (s *StoreAdapter) GetCompany(id int64) (*domain.Company, error) {
 	return &c, nil
 }
 
-func (s *StoreAdapter) GetCompanyUpdates(from, to time.Time, status string) []domain.Company {
-	var companies []domain.Company
+func (s *StoreAdapter) GetCompanyUpdates(from, to time.Time, status string, page, size int) ([]domain.Company, int) {
+	companies := make([]domain.Company, 0, len(s.company))
 
 	for _, c := range s.company {
 		if c.Updated.After(from) && c.Updated.Before(to) && c.Status == status {
@@ -126,7 +126,20 @@ func (s *StoreAdapter) GetCompanyUpdates(from, to time.Time, status string) []do
 		}
 	}
 
-	return companies
+	total := len(companies)
+
+	startOffset := (page - 1) * size
+	endOffset := startOffset + size
+
+	if startOffset > total {
+		return make([]domain.Company, 0), total
+	}
+
+	if endOffset > total {
+		return companies[startOffset:], total
+	}
+
+	return companies[startOffset:endOffset], total
 }
 
 func (s *StoreAdapter) StartCompanyUpdates(period int64) {
