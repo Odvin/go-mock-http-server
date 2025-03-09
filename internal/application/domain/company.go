@@ -13,3 +13,9 @@ type Company struct {
 	Email   string    `json:"email"`
 	Staff   int       `json:"staff"`
 }
+
+type CompanyInfo struct {
+	Total    int  `json:"total"`
+	Updating bool `json:"updating"`
+	Period   int  `json:"period"`
+}

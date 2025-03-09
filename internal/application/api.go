@@ -12,6 +12,7 @@ type API interface {
 	GetCompanyUpdates(from, to time.Time, status string) []domain.Company
 	StopCompanyUpdates()
 	StartCompanyUpdates(period int64) error
+	GetCompanyInfo() *domain.CompanyInfo
 }
 
 type Application struct {

@@ -37,3 +37,7 @@ func (app *Application) StartCompanyUpdates(period int64) error {
 
 	return nil
 }
+
+func (app *Application) GetCompanyInfo() *domain.CompanyInfo {
+	return app.store.GetCompanyInfo()
+}

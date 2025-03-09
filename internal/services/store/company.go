@@ -13,6 +13,7 @@ type companyUpdater struct {
 	done    chan struct{}
 	stopped chan struct{}
 	active  bool
+	period  int
 }
 
 func (u companyUpdater) Stop() {
@@ -29,6 +30,7 @@ func NewCompanyUpdater(period time.Duration, company []domain.Company) *companyU
 		done:    make(chan struct{}),
 		stopped: make(chan struct{}),
 		active:  true,
+		period:  int(period.Seconds()),
 	}
 
 	log.Printf("store: company updater stats with period in %f seconds", period.Seconds())
@@ -95,6 +97,16 @@ func seedCompany(company []domain.Company) {
 	}
 }
 
+func (s *StoreAdapter) GetCompanyInfo() *domain.CompanyInfo {
+	companyInfo := &domain.CompanyInfo{
+		Total:    s.maxElements,
+		Updating: s.companyUpdater.active,
+		Period:   s.companyUpdater.period,
+	}
+
+	return companyInfo
+}
+
 func (s *StoreAdapter) GetCompany(id int64) (*domain.Company, error) {
 	if id > int64(s.maxElements) {
 		return nil, errors.New("company id is out of the range")
@@ -119,7 +131,10 @@ func (s *StoreAdapter) GetCompanyUpdates(from, to time.Time, status string) []do
 
 func (s *StoreAdapter) StartCompanyUpdates(period int64) {
 	s.companyUpdater.Stop()
-	s.companyUpdater = NewCompanyUpdater(time.Duration(period*int64(time.Second)), s.company)
+	s.companyUpdater = NewCompanyUpdater(
+		time.Duration(period)*time.Second,
+		s.company,
+	)
 }
 
 func (s *StoreAdapter) StopCompanyUpdates() {

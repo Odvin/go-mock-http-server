@@ -11,4 +11,5 @@ type Store interface {
 	GetCompanyUpdates(from, to time.Time, status string) []domain.Company
 	StopCompanyUpdates()
 	StartCompanyUpdates(period int64)
+	GetCompanyInfo() *domain.CompanyInfo
 }

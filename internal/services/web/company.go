@@ -82,3 +82,12 @@ func (web *WebService) StartCompanyUpdates(w http.ResponseWriter, r *http.Reques
 		serverErrorResponse(w, r, err)
 	}
 }
+
+func (web *WebService) GetCompanyInfo(w http.ResponseWriter, r *http.Request) {
+	companyInfo := web.api.GetCompanyInfo()
+
+	err := writeJSON(w, http.StatusOK, envelope{"company_info": companyInfo}, nil)
+	if err != nil {
+		serverErrorResponse(w, r, err)
+	}
+}
