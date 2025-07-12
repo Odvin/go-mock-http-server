@@ -1,0 +1,22 @@
+
+### GET Server helthcheck
+GET {{host}}/v1/healthcheck
+Accept: application/json
+
+### GET Company Updates Info
+GET {{host}}/v1/company/updates/info
+Accept: application/json
+
+> {%
+    client.global.set("id", jsonPath(response.body, "$.company_info.total"))
+%}
+
+### GET Company Infor by ID
+< {%
+    request.variables.set("id", $random.integer(1, client.global.get("id")))
+%}
+GET {{host}}/v1/company/{{id}}
+Accept: application/json
+
+
+
