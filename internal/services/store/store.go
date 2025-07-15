@@ -6,17 +6,17 @@ import (
 	"github.com/Odvin/go-mock-http-server/internal/application/domain"
 )
 
-type StoreAdapter struct {
+type Store struct {
 	maxElements    int
 	company        []domain.Company
 	companyUpdater *companyUpdater
 }
 
-func Init(maxElements int) *StoreAdapter {
+func Init(maxElements int) *Store {
 	company := make([]domain.Company, maxElements)
 	seedCompany(company)
 
-	return &StoreAdapter{
+	return &Store{
 		maxElements:    maxElements,
 		company:        company,
 		companyUpdater: NewCompanyUpdater(30*time.Second, company),

@@ -2,12 +2,16 @@ package store
 
 import (
 	"errors"
+	"fmt"
+	"github.com/Odvin/go-mock-http-server/pkg/mediator"
 	"log"
 	"time"
 
 	"github.com/Odvin/go-mock-http-server/internal/application/domain"
 	"github.com/brianvoe/gofakeit/v7"
 )
+
+var ps = mediator.GetPubSub()
 
 type companyUpdater struct {
 	done    chan struct{}
@@ -72,7 +76,7 @@ func updateCompany(company []domain.Company) {
 		log.Printf("store: company %d updated", update)
 	}
 
-	log.Printf("store: updated %d companies", updates)
+	ps.Publish("UpdateCompany", fmt.Sprintf("store: updated %d companies", updates))
 }
 
 func seedCompany(company []domain.Company) {
@@ -97,7 +101,7 @@ func seedCompany(company []domain.Company) {
 	}
 }
 
-func (s *StoreAdapter) GetCompanyInfo() *domain.CompanyInfo {
+func (s *Store) GetCompanyInfo() *domain.CompanyInfo {
 	companyInfo := &domain.CompanyInfo{
 		Total:    s.maxElements,
 		Updating: s.companyUpdater.active,
@@ -107,7 +111,7 @@ func (s *StoreAdapter) GetCompanyInfo() *domain.CompanyInfo {
 	return companyInfo
 }
 
-func (s *StoreAdapter) GetCompany(id int64) (*domain.Company, error) {
+func (s *Store) GetCompany(id int64) (*domain.Company, error) {
 	if id > int64(s.maxElements) {
 		return nil, errors.New("company id is out of the range")
 	}
@@ -117,7 +121,7 @@ func (s *StoreAdapter) GetCompany(id int64) (*domain.Company, error) {
 	return &c, nil
 }
 
-func (s *StoreAdapter) GetCompanyUpdates(from, to time.Time, status string, page, size int) ([]domain.Company, int) {
+func (s *Store) GetCompanyUpdates(from, to time.Time, status string, page, size int) ([]domain.Company, int) {
 	companies := make([]domain.Company, 0, len(s.company))
 
 	for _, c := range s.company {
@@ -142,7 +146,7 @@ func (s *StoreAdapter) GetCompanyUpdates(from, to time.Time, status string, page
 	return companies[startOffset:endOffset], total
 }
 
-func (s *StoreAdapter) StartCompanyUpdates(period int64) {
+func (s *Store) StartCompanyUpdates(period int64) {
 	s.companyUpdater.Stop()
 	s.companyUpdater = NewCompanyUpdater(
 		time.Duration(period)*time.Second,
@@ -150,6 +154,6 @@ func (s *StoreAdapter) StartCompanyUpdates(period int64) {
 	)
 }
 
-func (s *StoreAdapter) StopCompanyUpdates() {
+func (s *Store) StopCompanyUpdates() {
 	s.companyUpdater.Stop()
 }

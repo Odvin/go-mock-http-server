@@ -14,15 +14,15 @@ import (
 	"github.com/Odvin/go-mock-http-server/internal/application"
 )
 
-type WebService struct {
+type Web struct {
 	api application.API
 	adr int
 	ver string
 	env string
 }
 
-func Init(api application.API, adr int, ver, env string) *WebService {
-	return &WebService{
+func Init(api application.API, adr int, ver, env string) *Web {
+	return &Web{
 		api: api,
 		adr: adr,
 		ver: ver,
@@ -30,7 +30,7 @@ func Init(api application.API, adr int, ver, env string) *WebService {
 	}
 }
 
-func (web *WebService) Serve() error {
+func (web *Web) Serve() error {
 	srv := &http.Server{
 		Addr:         fmt.Sprintf(":%d", web.adr),
 		Handler:      web.routes(),

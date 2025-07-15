@@ -4,7 +4,7 @@ import (
 	"net/http"
 )
 
-func (web *WebService) healthcheck(w http.ResponseWriter, r *http.Request) {
+func (web *Web) healthcheck(w http.ResponseWriter, r *http.Request) {
 	env := envelope{
 		"status": "available",
 		"system_info": map[string]string{
