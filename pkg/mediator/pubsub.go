@@ -10,6 +10,8 @@ var once sync.Once
 type topicTitle string
 type TopicChanel chan any
 
+type Unsubscribe func()
+
 type PubSub struct {
 	topics map[topicTitle][]TopicChanel
 	mu     sync.RWMutex
@@ -25,7 +27,7 @@ func GetPubSub() *PubSub {
 	return instance
 }
 
-func (ps *PubSub) Subscribe(topic topicTitle) (TopicChanel, func()) {
+func (ps *PubSub) Subscribe(topic topicTitle) (TopicChanel, Unsubscribe) {
 	ps.mu.Lock()
 	defer ps.mu.Unlock()
 

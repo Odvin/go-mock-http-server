@@ -19,6 +19,6 @@ func Init(maxElements int) *Store {
 	return &Store{
 		maxElements:    maxElements,
 		company:        company,
-		companyUpdater: NewCompanyUpdater(30*time.Second, company),
+		companyUpdater: NewCompanyUpdater(10*time.Second, company),
 	}
 }

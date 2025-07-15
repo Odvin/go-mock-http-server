@@ -15,7 +15,7 @@
     var response = document.getElementById('response');
 
     sse.onmessage = function (event) {
-        response.innerHTML += event.data + ' ';
+        response.innerHTML += event.data + '<br/>';
     };
 
     sse.onerror = function (e) {
