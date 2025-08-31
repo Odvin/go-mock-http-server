@@ -2,13 +2,14 @@ package web
 
 import (
 	"fmt"
-	"github.com/Odvin/go-mock-http-server/pkg/mediator"
 	"net/http"
+
+	"github.com/Odvin/go-mock-http-server/pkg/mediator"
 )
 
 var ps = mediator.GetPubSub()
 
-func (web *Web) events(w http.ResponseWriter, r *http.Request) {
+func (hs *HttpServer) events(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Content-Type", "text/event-stream")
 

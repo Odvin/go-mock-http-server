@@ -4,12 +4,12 @@ import (
 	"net/http"
 )
 
-func (web *Web) healthcheck(w http.ResponseWriter, r *http.Request) {
+func (hs *HttpServer) healthcheck(w http.ResponseWriter, r *http.Request) {
 	env := envelope{
 		"status": "available",
 		"system_info": map[string]string{
-			"environment": web.env,
-			"version":     web.ver,
+			"environment": hs.env,
+			"version":     hs.ver,
 		},
 	}
 

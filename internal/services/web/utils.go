@@ -22,7 +22,7 @@ func writeJSON(w http.ResponseWriter, status int, data envelope, headers http.He
 
 	maps.Copy(w.Header(), headers)
 
-	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Content-Type", "app/json")
 	w.WriteHeader(status)
 	w.Write(js)
 

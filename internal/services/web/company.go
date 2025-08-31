@@ -6,14 +6,14 @@ import (
 	"net/http"
 )
 
-func (web *Web) getCompany(w http.ResponseWriter, r *http.Request) {
+func (hs *HttpServer) getCompany(w http.ResponseWriter, r *http.Request) {
 	id, err := readPathInt(r, "id")
 	if err != nil {
 		badRequestResponse(w, r, fmt.Errorf("id : %w", err))
 		return
 	}
 
-	company, err := web.api.GetCompany(id)
+	company, err := hs.api.GetCompany(id)
 	if err != nil {
 		badRequestResponse(w, r, fmt.Errorf("id : %w", err))
 		return
@@ -25,7 +25,7 @@ func (web *Web) getCompany(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (web *Web) GetCompanyUpdates(w http.ResponseWriter, r *http.Request) {
+func (hs *HttpServer) GetCompanyUpdates(w http.ResponseWriter, r *http.Request) {
 	from, err := readQueryTime(r, "from")
 	if err != nil {
 		badRequestResponse(w, r, fmt.Errorf("from : %w", err))
@@ -56,7 +56,7 @@ func (web *Web) GetCompanyUpdates(w http.ResponseWriter, r *http.Request) {
 		size = 20
 	}
 
-	companies, total := web.api.GetCompanyUpdates(from, to, status, int(page), int(size))
+	companies, total := hs.api.GetCompanyUpdates(from, to, status, int(page), int(size))
 
 	subset := map[string]int64{
 		"total": int64(total),
@@ -70,8 +70,8 @@ func (web *Web) GetCompanyUpdates(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (web *Web) StopCompanyUpdates(w http.ResponseWriter, r *http.Request) {
-	web.api.StopCompanyUpdates()
+func (hs *HttpServer) StopCompanyUpdates(w http.ResponseWriter, r *http.Request) {
+	hs.api.StopCompanyUpdates()
 
 	err := writeJSON(w, http.StatusOK, envelope{"updates": "company", "stopped": true}, nil)
 	if err != nil {
@@ -79,7 +79,7 @@ func (web *Web) StopCompanyUpdates(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (web *Web) StartCompanyUpdates(w http.ResponseWriter, r *http.Request) {
+func (hs *HttpServer) StartCompanyUpdates(w http.ResponseWriter, r *http.Request) {
 	var input struct {
 		Period int64 `json:"period"`
 	}
@@ -89,7 +89,7 @@ func (web *Web) StartCompanyUpdates(w http.ResponseWriter, r *http.Request) {
 		serverErrorResponse(w, r, err)
 	}
 
-	err = web.api.StartCompanyUpdates(input.Period)
+	err = hs.api.StartCompanyUpdates(input.Period)
 	if err != nil {
 		badRequestResponse(w, r, fmt.Errorf("body : %w", err))
 		return
@@ -101,8 +101,8 @@ func (web *Web) StartCompanyUpdates(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (web *Web) GetCompanyInfo(w http.ResponseWriter, r *http.Request) {
-	companyInfo := web.api.GetCompanyInfo()
+func (hs *HttpServer) GetCompanyInfo(w http.ResponseWriter, r *http.Request) {
+	companyInfo := hs.api.GetCompanyInfo()
 
 	err := writeJSON(w, http.StatusOK, envelope{"company_info": companyInfo}, nil)
 	if err != nil {

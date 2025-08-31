@@ -3,17 +3,17 @@ package store
 import (
 	"time"
 
-	"github.com/Odvin/go-mock-http-server/internal/application/domain"
+	"github.com/Odvin/go-mock-http-server/internal/app"
 )
 
 type Store struct {
 	maxElements    int
-	company        []domain.Company
-	companyUpdater *companyUpdater
+	company        []app.Company
+	companyUpdater *CompanyUpdater
 }
 
 func Init(maxElements int) *Store {
-	company := make([]domain.Company, maxElements)
+	company := make([]app.Company, maxElements)
 	seedCompany(company)
 
 	return &Store{

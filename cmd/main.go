@@ -4,7 +4,7 @@ import (
 	"log"
 
 	"github.com/Odvin/go-mock-http-server/config"
-	"github.com/Odvin/go-mock-http-server/internal/application"
+	"github.com/Odvin/go-mock-http-server/internal/app"
 	"github.com/Odvin/go-mock-http-server/internal/services/store"
 	"github.com/Odvin/go-mock-http-server/internal/services/web"
 )
@@ -12,11 +12,11 @@ import (
 func main() {
 	cfg := config.InitConfig()
 
-	storeAdapter := store.Init(100)
+	storeService := store.Init(100)
 
-	appAdapter := application.Init(storeAdapter)
+	application := app.Init(storeService)
 
-	webService := web.Init(appAdapter, cfg.Port, "1.0.0", cfg.Env)
+	webService := web.Init(application, cfg.Port, "1.0.0", cfg.Env)
 
 	log.Printf("starting server on port :%d (env: %s)", cfg.Port, cfg.Env)
 

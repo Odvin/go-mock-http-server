@@ -11,18 +11,18 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/Odvin/go-mock-http-server/internal/application"
+	"github.com/Odvin/go-mock-http-server/internal/app"
 )
 
-type Web struct {
-	api application.API
+type HttpServer struct {
+	api app.API
 	adr int
 	ver string
 	env string
 }
 
-func Init(api application.API, adr int, ver, env string) *Web {
-	return &Web{
+func Init(api app.API, adr int, ver, env string) *HttpServer {
+	return &HttpServer{
 		api: api,
 		adr: adr,
 		ver: ver,
@@ -30,10 +30,10 @@ func Init(api application.API, adr int, ver, env string) *Web {
 	}
 }
 
-func (web *Web) Serve() error {
+func (hs *HttpServer) Serve() error {
 	srv := &http.Server{
-		Addr:         fmt.Sprintf(":%d", web.adr),
-		Handler:      web.routes(),
+		Addr:         fmt.Sprintf(":%d", hs.adr),
+		Handler:      hs.routes(),
 		IdleTimeout:  time.Minute,
 		ReadTimeout:  10 * time.Second,
 		WriteTimeout: 30 * time.Second,
@@ -50,7 +50,7 @@ func (web *Web) Serve() error {
 
 		log.Printf("stopping the server (signal: %s)", s.String())
 
-		web.api.StopCompanyUpdates()
+		hs.api.StopCompanyUpdates()
 
 		ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
 		defer cancel()
