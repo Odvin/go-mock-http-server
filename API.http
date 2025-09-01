@@ -1,21 +1,49 @@
 
-### GET Server helthcheck
+### Server helthcheck
 GET {{host}}/v1/healthcheck
 Accept: application/json
 
-### GET Company Updates Info
+### Company Updates Info
 GET {{host}}/v1/company/updates/info
 Accept: application/json
 
 > {%
-    client.global.set("id", jsonPath(response.body, "$.company_info.total"))
+    client.global.set("maxId", jsonPath(response.body, "$.company_info.total"))
 %}
 
-### GET Company Infor by ID
+### Company Infor by random ID
 < {%
-    request.variables.set("id", $random.integer(1, client.global.get("id")))
+    request.variables.set("id", $random.integer(1, client.global.get("maxId")))
 %}
 GET {{host}}/v1/company/{{id}}
+Accept: application/json
+
+### Company Info by provided ID
+GET {{host}}/v1/company/42
+Accept: application/json
+
+### Stop Updates
+PATCH {{host}}/v1/company/updates/stop
+Accept: application/json
+
+### Start Updates
+PATCH {{host}}/v1/company/updates/start
+Accept: application/json
+
+{
+    "period": 20
+}
+
+### Updated companies
+< {%
+    request.variables.set("from", `1995-10-18T05:07:00Z`)
+    request.variables.set("to", `2025-10-02T19:57:22Z`)
+    request.variables.set("status", `public`)
+    request.variables.set("page", 1)
+    request.variables.set("size", 5)
+%}
+
+GET {{host}}/v1/company/updates?from={{from}}&to={{to}}&status={{status}}&page={{page}}&size={{size}}
 Accept: application/json
 
 
