@@ -119,7 +119,7 @@ GET localhost:4000/v1/company/updates?from=1995-10-18T05:07:00Z&to=2025-03-02T19
 ### 9. Web Interface
 View logs and update events in your browser:
 ```
-host/web/index.html
+host/static/
 ```
 
 ### 10 Extensibility

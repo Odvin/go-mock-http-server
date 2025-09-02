@@ -5,14 +5,14 @@
     <title>SSE</title>
 </head>
 <body>
-<h2>Real-time response</h2>
-<p id="response"></p>
+<h2>Server events</h2>
+<div id="response"></div>
 
 <script>
-    var sse = new EventSource('http://localhost:4000/v1/events', {
+    const sse = new EventSource(`http://${document.location.host}/v1/events`, {
         withCredentials: false,
     });
-    var response = document.getElementById('response');
+    const response = document.getElementById('response');
 
     sse.onmessage = function (event) {
         response.innerHTML += event.data + '<br/>';

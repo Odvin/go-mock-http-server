@@ -14,5 +14,8 @@ func (hs *HttpServer) routes() http.Handler {
 	router.HandleFunc("PATCH /v1/company/updates/stop", hs.StopCompanyUpdates)
 	router.HandleFunc("PATCH /v1/company/updates/start", hs.StartCompanyUpdates)
 
+	fileServer := http.FileServer(http.Dir("./ui/static/"))
+	router.Handle("GET /static/", http.StripPrefix("/static", fileServer))
+
 	return router
 }
