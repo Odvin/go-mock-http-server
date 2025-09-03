@@ -24,7 +24,7 @@ func writeJSON(w http.ResponseWriter, status int, data envelope, headers http.He
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(status)
-	w.Write(js)
+	_, _ = w.Write(js)
 
 	return nil
 }

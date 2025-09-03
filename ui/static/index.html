@@ -6,22 +6,30 @@
 </head>
 <body>
 <h2>Server events</h2>
-<div id="response"></div>
+<div id="log"></div>
 
 <script>
     const sse = new EventSource(`http://${document.location.host}/v1/events`, {
         withCredentials: false,
     });
-    const response = document.getElementById('response');
+    const logElement = document.getElementById('log');
+    const log = (msg) => logElement.innerHTML += msg + "<br>";
 
     sse.onmessage = function (event) {
-        response.innerHTML += event.data + '<br/>';
+        log("Message => " + event.data);
     };
 
-    sse.onerror = function (e) {
+    sse.addEventListener("close", (event) => {
+        log("Stream closed by server: " + event.data);
+        sse.close();
+    });
+
+    sse.onerror = function () {
+        log("Connection lost (network/server error).");
+
         setTimeout(() => {
-            response.innerHTML = '';
-        }, 1000);
+            logElement.innerHTML = '';
+        }, 5000);
     };
 </script>
 </body>

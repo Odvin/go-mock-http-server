@@ -36,14 +36,14 @@ type Company struct {
 	Created time.Time `json:"created"`
 	Updated time.Time `json:"updated"`
 	Active  bool      `json:"active"`
-	Company string    `json:"company"`
+	Company string    `json:"companies"`
 	Status  string    `json:"status"`
 	Phone   string    `json:"phone"`
 	Email   string    `json:"email"`
 	Staff   int       `json:"staff"`
 }
 ```
-- Immutable attributes: `id`, `created`, `company`, `status`
+- Immutable attributes: `id`, `created`, `companies`, `status`
 - Mutable attributes: `active`, `phone`, `email`, `staff`
 - `updated` tracks the last update time
 
@@ -52,7 +52,7 @@ You can configure the __number of entities__ and the __update frequency__.
 ### 4. Get Update Info
 Check how many entities exist and the update frequency:
 ```
-GET host/v1/company/updates/info
+GET host/v1/companies/updates/info
 ```
 Response:
 ```json
@@ -66,14 +66,14 @@ Response:
 ```
 
 ### 5. Get Company by ID
-Retrieve company details:
+Retrieve companies details:
 ```
-GET host/v1/company/{id}
+GET host/v1/companies/{id}
 ```
 Response:
 ```json
 {
-  "company": {
+  "companies": {
     "id": 58,
     "created": "1984-08-29T06:56:24.611616918Z",
     "updated": "2025-09-01T12:13:04.046639Z",
@@ -89,7 +89,7 @@ Response:
 ### 6. Stop Data Updates
 Pause random updates of entities:
 ```
-PATCH host/v1/company/updates/stop
+PATCH host/v1/companies/updates/stop
 ```
 Useful for testing __data synchronization stability__.
 
@@ -97,7 +97,7 @@ Useful for testing __data synchronization stability__.
 ### 7. Start Data Updates
 Resume updates and set the mutation period (in seconds):
 ```
-PATCH host/v1/company/updates/start
+PATCH host/v1/companies/updates/start
 ```
 Request body:
 ```json
@@ -109,11 +109,11 @@ Request body:
 ### 8. Synchronization Endpoint
 Retrieve updated data with filters for time, status, and pagination:
 ```
-GET host/v1/company/updates?from={from}&to={to}&status={status}&page={page}&size={size}
+GET host/v1/companies/updates?from={from}&to={to}&status={status}&page={page}&size={size}
 ```
 Example:
 ```
-GET localhost:4000/v1/company/updates?from=1995-10-18T05:07:00Z&to=2025-03-02T19:57:22Z&status=public&page=1
+GET localhost:4000/v1/companies/updates?from=1995-10-18T05:07:00Z&to=2025-03-02T19:57:22Z&status=public&page=1
 ```
 
 ### 9. Web Interface

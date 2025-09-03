@@ -20,8 +20,7 @@ func main() {
 
 	log.Printf("starting server on port :%d (env: %s)", cfg.Port, cfg.Env)
 
-	err := webService.Serve()
-	if err != nil {
-		log.Panic(err)
+	if err := webService.Serve(); err != nil {
+		log.Fatal(err)
 	}
 }

@@ -8,11 +8,11 @@ func (hs *HttpServer) routes() http.Handler {
 	router.HandleFunc("GET /v1/healthcheck", hs.healthcheck)
 	router.HandleFunc("GET /v1/events", hs.events)
 
-	router.HandleFunc("GET /v1/company/{id}", hs.getCompany)
-	router.HandleFunc("GET /v1/company/updates", hs.GetCompanyUpdates)
-	router.HandleFunc("GET /v1/company/updates/info", hs.GetCompanyInfo)
-	router.HandleFunc("PATCH /v1/company/updates/stop", hs.StopCompanyUpdates)
-	router.HandleFunc("PATCH /v1/company/updates/start", hs.StartCompanyUpdates)
+	router.HandleFunc("GET /v1/companies/{id}", hs.getCompany)
+	router.HandleFunc("GET /v1/companies/updates", hs.GetCompanyUpdates)
+	router.HandleFunc("GET /v1/companies/updates/info", hs.GetCompanyInfo)
+	router.HandleFunc("PATCH /v1/companies/updates/stop", hs.StopCompanyUpdates)
+	router.HandleFunc("PATCH /v1/companies/updates/start", hs.StartCompanyUpdates)
 
 	fileServer := http.FileServer(http.Dir("./ui/static/"))
 	router.Handle("GET /static/", http.StripPrefix("/static", fileServer))

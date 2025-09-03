@@ -12,21 +12,30 @@ import (
 	"time"
 
 	"github.com/Odvin/go-mock-http-server/internal/app"
+	"github.com/Odvin/go-mock-http-server/pkg/mediator"
 )
 
+var ps = mediator.GetPubSub()
+
 type HttpServer struct {
-	api app.API
-	adr int
-	ver string
-	env string
+	api      app.API
+	adr      int
+	ver      string
+	env      string
+	ctx      context.Context
+	shutdown context.CancelFunc
 }
 
 func Init(api app.API, adr int, ver, env string) *HttpServer {
+	ctx, cancel := context.WithCancel(context.Background())
+
 	return &HttpServer{
-		api: api,
-		adr: adr,
-		ver: ver,
-		env: env,
+		api:      api,
+		adr:      adr,
+		ver:      ver,
+		env:      env,
+		ctx:      ctx,
+		shutdown: cancel,
 	}
 }
 
@@ -39,36 +48,23 @@ func (hs *HttpServer) Serve() error {
 		WriteTimeout: 30 * time.Second,
 	}
 
-	shutdownError := make(chan error)
+	stop := make(chan os.Signal, 1)
+	signal.Notify(stop, syscall.SIGINT, syscall.SIGTERM)
 
-	go func() {
-		quit := make(chan os.Signal, 1)
+	go func(srv *http.Server) {
+		if err := srv.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
+			log.Fatalf("ListenAndServe error: %v", err)
+		}
+	}(srv)
 
-		signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+	s := <-stop
+	log.Printf("Shutdown signal received (signal: %s)", s.String())
 
-		s := <-quit
+	hs.api.StopCompanyUpdates()
+	hs.shutdown()
 
-		log.Printf("stopping the server (signal: %s)", s.String())
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
 
-		hs.api.StopCompanyUpdates()
-
-		ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
-		defer cancel()
-
-		shutdownError <- srv.Shutdown(ctx)
-	}()
-
-	err := srv.ListenAndServe()
-	if !errors.Is(err, http.ErrServerClosed) {
-		return err
-	}
-
-	err = <-shutdownError
-	if err != nil {
-		return err
-	}
-
-	log.Printf("stopped server on port %s", srv.Addr)
-
-	return nil
+	return srv.Shutdown(ctx)
 }

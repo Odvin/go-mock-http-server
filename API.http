@@ -4,7 +4,7 @@ GET {{host}}/v1/healthcheck
 Accept: application/json
 
 ### Company Updates Info
-GET {{host}}/v1/company/updates/info
+GET {{host}}/v1/companies/updates/info
 Accept: application/json
 
 > {%
@@ -15,19 +15,19 @@ Accept: application/json
 < {%
     request.variables.set("id", $random.integer(1, client.global.get("maxId")))
 %}
-GET {{host}}/v1/company/{{id}}
+GET {{host}}/v1/companies/{{id}}
 Accept: application/json
 
 ### Company Info by provided ID
-GET {{host}}/v1/company/42
+GET {{host}}/v1/companies/42
 Accept: application/json
 
 ### Stop Updates
-PATCH {{host}}/v1/company/updates/stop
+PATCH {{host}}/v1/companies/updates/stop
 Accept: application/json
 
 ### Start Updates
-PATCH {{host}}/v1/company/updates/start
+PATCH {{host}}/v1/companies/updates/start
 Accept: application/json
 
 {
@@ -43,7 +43,7 @@ Accept: application/json
     request.variables.set("size", 5)
 %}
 
-GET {{host}}/v1/company/updates?from={{from}}&to={{to}}&status={{status}}&page={{page}}&size={{size}}
+GET {{host}}/v1/companies/updates?from={{from}}&to={{to}}&status={{status}}&page={{page}}&size={{size}}
 Accept: application/json
 
 

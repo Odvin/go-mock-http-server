@@ -7,12 +7,8 @@ import (
 	"time"
 
 	"github.com/Odvin/go-mock-http-server/internal/app"
-	"github.com/Odvin/go-mock-http-server/pkg/mediator"
-
 	"github.com/brianvoe/gofakeit/v7"
 )
-
-var ps = mediator.GetPubSub()
 
 type CompanyUpdater struct {
 	done    chan struct{}
@@ -62,32 +58,32 @@ func NewCompanyUpdater(period time.Duration, company []app.Company) *CompanyUpda
 	return companyUpdater
 }
 
-func updateCompany(company []app.Company) {
-	updates := gofakeit.Number(1, len(company))
+func updateCompany(companies []app.Company) {
+	updates := gofakeit.Number(1, len(companies))
 
 	for range updates {
-		update := gofakeit.Number(0, len(company)-1)
+		id := gofakeit.Number(0, len(companies)-1)
 
-		company[update].Updated = time.Now().UTC()
-		company[update].Active = gofakeit.Bool()
-		company[update].Phone = gofakeit.Phone()
-		company[update].Email = gofakeit.Email()
-		company[update].Staff = gofakeit.Number(15, 350)
+		companies[id].Updated = time.Now().UTC()
+		companies[id].Active = gofakeit.Bool()
+		companies[id].Phone = gofakeit.Phone()
+		companies[id].Email = gofakeit.Email()
+		companies[id].Staff = gofakeit.Number(15, 350)
 
-		log.Printf("store: company %d updated", update)
+		log.Printf("store: company %d updated", id)
 	}
 
 	ps.Publish("UpdateCompany", fmt.Sprintf("store: updated %d companies", updates))
 }
 
-func seedCompany(company []app.Company) {
+func seedCompany(companies []app.Company) {
 	statuses := []string{"public", "private"}
 
 	var created time.Time
-	for i := range len(company) {
+	for i := range len(companies) {
 		created = gofakeit.Date()
 
-		company[i] = app.Company{
+		companies[i] = app.Company{
 			ID:      i + 1,
 			Created: created,
 			Updated: created,
@@ -104,7 +100,7 @@ func seedCompany(company []app.Company) {
 
 func (s *Store) GetCompanyInfo() *app.CompanyInfo {
 	companyInfo := &app.CompanyInfo{
-		Total:    s.maxElements,
+		Total:    len(s.companies),
 		Updating: s.companyUpdater.active,
 		Period:   s.companyUpdater.period,
 	}
@@ -113,25 +109,25 @@ func (s *Store) GetCompanyInfo() *app.CompanyInfo {
 }
 
 func (s *Store) GetCompany(id int64) (*app.Company, error) {
-	if id > int64(s.maxElements) {
+	if id > int64(len(s.companies)) {
 		return nil, errors.New("company id is out of the range")
 	}
 
-	c := s.company[id-1]
+	c := s.companies[id-1]
 
 	return &c, nil
 }
 
 func (s *Store) GetCompanyUpdates(from, to time.Time, status string, page, size int) ([]app.Company, int) {
-	companies := make([]app.Company, 0, len(s.company))
+	updatedCompanies := make([]app.Company, 0, len(s.companies))
 
-	for _, c := range s.company {
+	for _, c := range s.companies {
 		if c.Updated.After(from) && c.Updated.Before(to) && c.Status == status {
-			companies = append(companies, c)
+			updatedCompanies = append(updatedCompanies, c)
 		}
 	}
 
-	total := len(companies)
+	total := len(updatedCompanies)
 
 	startOffset := (page - 1) * size
 	endOffset := startOffset + size
@@ -141,17 +137,17 @@ func (s *Store) GetCompanyUpdates(from, to time.Time, status string, page, size 
 	}
 
 	if endOffset > total {
-		return companies[startOffset:], total
+		return updatedCompanies[startOffset:], total
 	}
 
-	return companies[startOffset:endOffset], total
+	return updatedCompanies[startOffset:endOffset], total
 }
 
 func (s *Store) StartCompanyUpdates(period int64) {
 	s.companyUpdater.Stop()
 	s.companyUpdater = NewCompanyUpdater(
 		time.Duration(period)*time.Second,
-		s.company,
+		s.companies,
 	)
 }
 
